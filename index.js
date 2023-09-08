@@ -1,16 +1,17 @@
-const user_router=require("./Routes/user_routes");
-const exercise_router=require("./Routes/exercise_routes");
 const cors=require("cors");
 const mongoose = require("mongoose");
+const goal_router=require("./Routes/goal_routes")
+const user_router=require("./Routes/user_routes")
 const express = require("express");
 
 const app = express();
 
 const port = process.env.PORT || 4200;
 
-
 // Method-1
-const mongoURI = 'mongodb+srv://abdullahbhai:abdullah56@cluster0.2eddj7c.mongodb.net/';
+const mongoURI = 'mongodb://127.0.0.1:27017/Goal';
+// Method-2
+// const mongoURI = 'mongodb+srv://abdullahbhai:abdullah56@cluster0.2eddj7c.mongodb.net/First_MERN';
 
 mongoose.connect(mongoURI)
     .then(function () {
@@ -22,7 +23,7 @@ mongoose.connect(mongoURI)
 );
 
 
-app.use(cors());//using cors to allow routing......
+// app.use(cors());//using cors to allow routing......
 
 
 //jb frontend sy data aay ga wo string ki form mey ho ga.
@@ -31,10 +32,14 @@ app.use(express.json());
 
 
 //to use router
-app.use("/user",user_router);//user router
-app.use("/exercise",exercise_router);//exercise router 
+// app.use("/user",user_router);//user router
+// app.use("/exercise",exercise_router);//exercise router 
 
+// app.use("/goal",goal_router);//goal router
 
+//to use router
+app.use("/goal",goal_router); 
+app.use("/user",user_router);  
 
 
 app.listen(port, function () {
