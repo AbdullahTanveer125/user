@@ -1,55 +1,51 @@
-const cors=require("cors");
-const mongoose = require("mongoose");
-const goal_router=require("./Routes/goal_routes")
-const user_router=require("./Routes/user_routes")
-const express = require("express");
-
-const app = express();
-
-const port = process.env.PORT || 4200;
-
-// Method-1
-const mongoURI = 'mongodb://127.0.0.1:27017/Goal';
-// Method-2
-// const mongoURI = 'mongodb+srv://abdullahbhai:abdullah56@cluster0.2eddj7c.mongodb.net/First_MERN';
-
-mongoose.connect(mongoURI)
-    .then(function () {
-        console.log('Connected to MongoDB');
-    })
-    .catch(function (err) {
-        console.error('Error connecting to MongoDB:', err,);
-    }
-);
+const app = require("./app");
+const connectDatabase = require("./Multi-Vender(E-Commerce)/db/Database");
+// const cloudinary = require("cloudinary");
 
 
-// app.use(cors());//using cors to allow routing......
+// import and configuration of dotenv
+const dotenv = require("dotenv");
+dotenv.config();
 
 
-//jb frontend sy data aay ga wo string ki form mey ho ga.
-// is sy json ki form mey aaa jay ga
-app.use(express.json());
+// Handling uncaught Exception
+process.on("uncaughtException", (err) => {
+	console.log(`Error: ${err.message}`);
+	console.log(`shutting down the server for handling uncaught exception`);
+});
+
+// config
+if (process.env.NODE_ENV !== "PRODUCTION") {
+	require("dotenv").config({
+		path: "config/.env",
+	});
+}
+
+// connect db
+connectDatabase();
+
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET
+// })
 
 
-//to use router
-// app.use("/user",user_router);//user router
-// app.use("/exercise",exercise_router);//exercise router 
+// create server
+const port = process.env.PORT || 9000;
 
-// app.use("/goal",goal_router);//goal router
+const server = app.listen(port, () => {
+	console.log(
+		`Server is running on http://localhost:${port}`
+	);
+});
 
-//to use router
-app.use("/goal",goal_router); 
-app.use("/user",user_router);  
+// unhandled promise rejection
+process.on("unhandledRejection", (err) => {
+	console.log(`Shutting down the server for ${err.message}`);
+	console.log(`shutting down the server for unhandle promise rejection`);
 
-
-app.listen(port, function () {
-    console.log(`Server run at ${port}`)
-});                
-
-
-
-
-
-
-
-
+	server.close(() => {
+		process.exit(1);
+	});
+});
